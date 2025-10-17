@@ -114,3 +114,68 @@ function gameObject() {
         },
     };
 }
+const gameData = gameObject(); //assigns a variable to the gameObject function to make it easier to work with
+
+function allTeams() {
+    return [gameData.home, gameData.away]
+}; //function to combine everything into one array[[home], [away]]
+
+function findTeam(teamName) {
+    return allTeams().find(team => team.teamName === teamName);
+} //goes through and returns stats for each team
+
+function allPlayersEntries() {
+    return allTeams().flatMap(team => Object.entries(team.players)); //steps into the player object and flattens the depth
+} // [['player name', [..player stats]] returns a bunch of mini lists
+
+function findPlayer(playerName) {
+    return allPlayersEntries().find(([name]) => name === playerName);
+} //returns the stats of a selected player
+
+
+function numPointsScored(playerName) {
+    const player = findPlayer(playerName); //call findplayer function to locate player stats
+    return player[1].points; //index at 1 because of flatMap.  index 0 would be just the player name
+};
+
+function shoeSize(playerName) {
+    const player = findPlayer(playerName) //call findplayer function to locate player stats
+    return player[1].shoe; //returns the shoe size stat
+};
+
+function teamColors(teamName) {
+    return findTeam(teamName).colors; //call findTeam function to access team color property
+};
+
+function teamNames() {
+    return allTeams().map(team => team.teamName); //creates a new array of all the team names
+};
+
+function playerNumbers(teamName) {
+    const team = findTeam(teamName)
+    return Object.values(team.players).map(player => player.number);//creates a new array of all players and numbers on team
+}
+
+function playerStats(playerName) {
+    const player = findPlayer(playerName);
+    return player[1]; //returns all player stats
+}
+
+function bigShoeRebounds() {
+    const dataObject = gameObject(); //assign gameObject to a variable
+    let biggestShoeSize = 0; //set shoe size to zero
+    let reboundsAtMax = 0; //variable to assign rebounds number to once largest shoe size is found
+
+    for (const team in dataObject) { //access the team property
+        const players = dataObject[team].players; //access player object
+        for (const player in players) {
+            const stats = players[player]; //access the stats of players
+            if (stats.shoe > biggestShoeSize) { 
+                biggestShoeSize = stats.shoe; //assigns the shoe size. Bigger shoes will overwrite the smallest until the biggest is found
+                reboundsAtMax = stats.rebounds; //assigns the rebounds of the biggest shoe size
+            }
+        }
+    }
+    return reboundsAtMax; //return total rebounds
+}
+
